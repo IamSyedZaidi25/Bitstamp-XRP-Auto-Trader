@@ -1,4 +1,6 @@
-# btc
+# XRP Auto Trader
+    ![alt text](https://github.com/danielreyes61/Bitcoin-Trader/blob/master/screenshot.png)
+
 Core Files:
  - exchange_account_access.py
  - pickler.py
@@ -21,4 +23,3 @@ Core Files:
               }
 
 		This file is automatically loaded into exchange_account_access.py so no implementation is needed.
-    ![alt text](https://github.com/danielreyes61/Bitcoin-Trader/blob/master/screenshot.png)
