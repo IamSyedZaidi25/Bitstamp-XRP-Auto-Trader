@@ -1,5 +1,5 @@
 # XRP Auto Trader
-    ![alt text](https://github.com/danielreyes61/Bitcoin-Trader/blob/master/screenshot.png)
+![alt text](https://github.com/danielreyes61/Bitcoin-Trader/blob/master/screenshot.png?raw=true)
 
 Core Files:
  - exchange_account_access.py
