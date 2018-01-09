@@ -8,23 +8,19 @@ import pickle
 import smtplib
 import os, os.path
 
-
 key_file = open("key.pickle", "rb")
 key_loaded = pickle.load(key_file)
 key_file.close()
 
-
-
 def emailNotify(message):
-    loc = key_file["GMAIL"][0]
+    loc = key_loaded["GMAIL"][0]
     message = message
-    pw = key_file["GMAIL"][1]
+    pw = key_loaded["GMAIL"][1]
     server=smtplib.SMTP('smtp.gmail.com:587')
     server.starttls()
     server.login(loc,pw)
     server.sendmail(loc,loc,message)
     server.quit()
-
 
 def bitstamp(method,**kwargs):
     method = method
@@ -95,7 +91,7 @@ def bitstamp(method,**kwargs):
         print("Not a good time. Holding....")
 
 
-    # Main information Print-Out
+    # Main information Dashboard
     print(
     "Total Value: $" +
     str((float(xrp_balance) * float(xrp_last)) +
@@ -136,11 +132,11 @@ def bitstamp(method,**kwargs):
         r = json.loads(r.text)
         return(r)
 
-
 while(1):
     try:
         print("\n" * 50)
         bitstamp("")
+
         time.sleep(15)
     except:
         print("\n" * 50)

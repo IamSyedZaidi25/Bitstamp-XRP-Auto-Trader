@@ -3,7 +3,7 @@ import pickle
 key_file = {
 "BITSTAMP":["key","secret"],
 "customer_id":"ENTER CUSTOMER ID HERE",
-"GMAIL":["ENTER USERNAME HERE","PASSWORD HERE"]
+"GMAIL":["ENTER USERNAME HER","PASSWORD HERE"]
 }
 
 key = open("key.pickle","wb")
