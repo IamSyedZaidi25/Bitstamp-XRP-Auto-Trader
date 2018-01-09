@@ -21,4 +21,4 @@ Core Files:
               }
 
 		This file is automatically loaded into exchange_account_access.py so no implementation is needed.
-    ![alt text](link)
+    ![alt text](https://github.com/danielreyes61/Bitcoin-Trader/blob/master/screenshot.png)
