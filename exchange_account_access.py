@@ -72,8 +72,8 @@ def bitstamp(method,**kwargs):
     saleOrBuy       = m[0]['xrp'] #if negative, was a sell, if positive, it was a buy
     lastPriceAction = m[0]['xrp_usd'] # price of what we paid or sold for last
     fee             = m[0]['fee'] #will give fee of last transaction
-    fee             = float(fee) / float(amountToBuy)
     amountToBuy     = int(abs(float(m[0]['usd']))/lastPriceAction)
+    fee             = float(fee) / float(amountToBuy)
     exitHardLine    = float(fee) +  lastPriceAction + (float(lastPriceAction) * 0.06)
     enterHardLine   = float(fee) + lastPriceAction - (float(lastPriceAction) * 0.06)
 
