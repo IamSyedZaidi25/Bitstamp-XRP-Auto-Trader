@@ -27,39 +27,57 @@ def emailNotify(message):
 
 
 def bitstamp(method,**kwargs):
-    urlappend = {"ltcusd":"ltc_withdrawal/","btcusd":"btc_withdrawal/"}  # for transfers only
     method = method
     key = key_loaded["BITSTAMP"][0]
     secret = key_loaded["BITSTAMP"][1]
     customer_id = key_loaded["customer_id"]
     nonce = str(time.time()).split('.')[0]
     message = (nonce + customer_id + key)
-    sign = hmac.new(secret.encode(),message.encode(), hashlib.sha256).hexdigest().upper()
-    data = ({ 'key': key,'signature':sign,'nonce':nonce})
-    r = requests.post("https://www.bitstamp.net/api/v2/balance/",data)
+    sign =  hmac.new(secret.encode(),
+            message.encode(),
+            hashlib.sha256).hexdigest().upper()
+    data = ({
+            'key': key,
+            'signature':sign,
+            'nonce':nonce
+            })
+
+    #Public Request
     x = requests.get("https://www.bitstamp.net/api/v2/ticker/xrpusd/")
-    r = json.loads(r.text)
     x = json.loads(x.text)
+    vwap = float(x["vwap"])
+    xrp_bid =    x["bid"]
+    xrp_ask =    x["ask"]
+    xrp_last =   x["last"]
+
+    #Authenticated Request
+    r = requests.post("https://www.bitstamp.net/api/v2/balance/",data)
+    r = json.loads(r.text)
     usd_balance = r["usd_balance"]
     xrp_balance = r["xrp_balance"]
     xrp_available = r["xrp_available"]
-    vwap = float(x["vwap"])
-    xrp_bid = x["bid"]
-    xrp_ask = x["ask"]
-    xrp_last = x["last"]
     nonce = str(time.time()).split('.')[0]
+
+    #Payload
     message = (nonce + customer_id + key)
     sign = hmac.new(secret.encode(),message.encode(), hashlib.sha256).hexdigest().upper()
     data = ({ 'key': key,'signature':sign,'nonce':nonce, 'limit':1})
+
     m = requests.post("	https://www.bitstamp.net/api/v2/user_transactions/xrpusd/",data)
+
     m = json.loads(m.text)
-    saleOrBuy = m[0]['xrp'] #if negative, was a sell, if positive, it was a buy
+
+
+    #Variable Extraction
+    saleOrBuy       = m[0]['xrp'] #if negative, was a sell, if positive, it was a buy
     lastPriceAction = m[0]['xrp_usd'] # price of what we paid or sold for last
-    amountToBuy = int(abs(float(m[0]['usd']))/lastPriceAction)
-    fee = m[0]['fee'] #will give fee of last transaction
-    fee = float(fee) / float(amountToBuy)
-    exitHardLine = float(fee) +  lastPriceAction + (float(lastPriceAction) * 0.06)
-    enterHardLine = float(fee) + lastPriceAction - (float(lastPriceAction) * 0.06)
+    fee             = m[0]['fee'] #will give fee of last transaction
+    fee             = float(fee) / float(amountToBuy)
+    amountToBuy     = int(abs(float(m[0]['usd']))/lastPriceAction)
+    exitHardLine    = float(fee) +  lastPriceAction + (float(lastPriceAction) * 0.06)
+    enterHardLine   = float(fee) + lastPriceAction - (float(lastPriceAction) * 0.06)
+
+    #Trading Algorithm Looking for 6% gain, can be adjusted easily.
     if(float(saleOrBuy) > 0.0): # if last action was positive, it was a buy.
         if(exitHardLine < vwap):
                 print("Should sell: " + str(exitHardLine))
@@ -77,8 +95,11 @@ def bitstamp(method,**kwargs):
         print("Not a good time. Holding....")
 
 
+    # Main information Print-Out
     print(
-    "Total Value: $" + str((float(xrp_balance) * float(xrp_last)) + float(usd_balance)) + "\n" +
+    "Total Value: $" +
+    str((float(xrp_balance) * float(xrp_last)) +
+    float(usd_balance)) + "\n" +
     "XRP Quantity: " + xrp_balance + "\n"
     "XRP Last: " + xrp_last + "\n"
     "XRP Bid: " + xrp_bid + "\n"
@@ -87,7 +108,8 @@ def bitstamp(method,**kwargs):
     )
 
 
-
+    # Buy and Sell supported multiple exchanges originally. Will refactor to
+    # create method calls to be placed in the buy and sell algorithm.
     if method == "buy":
         cp = kwargs['cp']
         amount = kwargs['amount']
@@ -122,5 +144,5 @@ while(1):
         time.sleep(15)
     except:
         print("\n" * 50)
-        print("Key Error. Retrying...")
+        print("Network Error. Retrying...")
         time.sleep(15)
